@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: #000000;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text fx:id="botName" strokeType="OUTSIDE" strokeWidth="0.0" text="Bot ">
+         <font>
+            <Font size="41.0" />
+         </font>
+      </Text>
+      <Text fx:id="cardCount" strokeType="OUTSIDE" strokeWidth="0.0" text="Cards: 4">
+         <font>
+            <Font size="28.0" />
+         </font>
+      </Text>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+   </padding>
+</VBox>
