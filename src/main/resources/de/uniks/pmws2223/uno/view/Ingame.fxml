@@ -33,6 +33,7 @@
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -48,6 +49,9 @@
                <font>
                   <Font size="23.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
             <VBox fx:id="botSpace2" alignment="CENTER" layoutX="187.0" layoutY="195.0" prefHeight="115.0" prefWidth="120.0" style="-fx-border-color: #000000;">
                <padding>
@@ -66,10 +70,13 @@
             </VBox>
             <VBox fx:id="discardPile" layoutX="473.0" layoutY="242.0" prefHeight="200.0" prefWidth="100.0" style="-fx-border-color: #000000;" />
             <HBox fx:id="humanCards" alignment="CENTER" layoutX="12.0" layoutY="584.0" prefHeight="136.0" prefWidth="1255.0" spacing="10.0" style="-fx-border-color: #000000;" />
-            <Button fx:id="drawButton" layoutX="707.0" layoutY="242.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="200.0" prefWidth="100.0">
+            <Button fx:id="drawButton" focusTraversable="false" layoutX="707.0" layoutY="242.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #123456;">
                <graphic>
                   <ImageView fitHeight="202.0" fitWidth="101.0" pickOnBounds="true" preserveRatio="true" />
                </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
          </children>
       </AnchorPane>

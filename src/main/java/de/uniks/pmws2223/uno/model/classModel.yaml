@@ -16,7 +16,7 @@
   roles: 	card_owner 	card_Game_currentCard
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name
+  attributes: 	player_name 	player_bot
   model: 	c
   modified: 	false
   name: 	Player
@@ -85,6 +85,15 @@
   propertyStyle: 	Bean
   type: 	String
   typeSignature: 	String
+
+- player_bot: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_bot
+  modified: 	false
+  name: 	bot
+  propertyStyle: 	Bean
+  type: 	boolean
+  typeSignature: 	boolean
 
 - player_cards: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

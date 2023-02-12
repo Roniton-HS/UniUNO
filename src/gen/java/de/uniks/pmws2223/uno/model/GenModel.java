@@ -4,7 +4,7 @@ import org.fulib.builder.ClassModelDecorator;
 import org.fulib.builder.ClassModelManager;
 import org.fulib.builder.reflect.Link;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class GenModel implements ClassModelDecorator {
@@ -13,7 +13,7 @@ public class GenModel implements ClassModelDecorator {
         String name;
 
         @Link("game")
-        ArrayList<Player> players;
+        List<Player> players;
 
         @Link
         Player currentPlayer;
@@ -26,8 +26,10 @@ public class GenModel implements ClassModelDecorator {
 
         String name;
 
+        boolean bot;
+
         @Link("owner")
-        ArrayList<Card> cards;
+        List<Card> cards;
 
         @Link("players")
         Game game;

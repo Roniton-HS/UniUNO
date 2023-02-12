@@ -7,7 +7,7 @@ import java.io.IOException;
 public class GameOverController implements Controller{
     @Override
     public String getTitle() {
-        return null;
+        return "UNO - Game Over";
     }
 
     @Override

@@ -11,10 +11,12 @@ public class Player
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_CARDS = "cards";
    public static final String PROPERTY_GAME = "game";
+   public static final String PROPERTY_BOT = "bot";
    private String name;
    private List<Card> cards;
    private Game game;
    protected PropertyChangeSupport listeners;
+   private boolean bot;
 
    public String getName()
    {
@@ -124,6 +126,24 @@ public class Player
          value.withPlayers(this);
       }
       this.firePropertyChange(PROPERTY_GAME, oldValue, value);
+      return this;
+   }
+
+   public boolean isBot()
+   {
+      return this.bot;
+   }
+
+   public Player setBot(boolean value)
+   {
+      if (value == this.bot)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.bot;
+      this.bot = value;
+      this.firePropertyChange(PROPERTY_BOT, oldValue, value);
       return this;
    }
 
