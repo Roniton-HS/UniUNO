@@ -1,13 +1,27 @@
 package de.uniks.pmws2223.uno.controller;
 
+import de.uniks.pmws2223.uno.App;
+import de.uniks.pmws2223.uno.Main;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public class SetupController implements Controller{
+public class SetupController implements Controller {
+    private App app;
+
+    public SetupController(App app) {
+
+        this.app = app;
+    }
+
     @Override
     public String getTitle() {
-        return null;
+        return "UNO - Setup";
     }
 
     @Override
@@ -17,7 +31,46 @@ public class SetupController implements Controller{
 
     @Override
     public Parent render() throws IOException {
-        return null;
+        //Load FXML
+        final Parent parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Setup.fxml")));
+
+        //bot count display
+        final Label botCount = (Label) parent.lookup("#botCount");
+
+        // plus-minus buttons
+        final Button plusButton = (Button) parent.lookup("#plusButton");
+        final Button minusButton = (Button) parent.lookup("#minusButton");
+
+        plusButton.setOnAction(action -> {
+            if (botCount.getText().equals("1")) {
+                botCount.setText("2");
+            } else if (botCount.getText().equals("2")) {
+                botCount.setText("3");
+            }
+        });
+
+        minusButton.setOnAction(action -> {
+            if (botCount.getText().equals("2")) {
+                botCount.setText("1");
+            } else if (botCount.getText().equals("3")) {
+                botCount.setText("2");
+            }
+        });
+
+        //text field
+        final TextField nameField = (TextField) parent.lookup("#nameField");
+
+        //start button
+        final Button startButton = (Button) parent.lookup("#startButton");
+
+        startButton.setOnAction(action ->{
+            if(!nameField.getText().equals("")){
+                int bots = Integer.parseInt(botCount.getText());
+                app.show(new IngameController(app, bots, nameField.getText()));
+            }
+        });
+
+        return parent;
     }
 
     @Override

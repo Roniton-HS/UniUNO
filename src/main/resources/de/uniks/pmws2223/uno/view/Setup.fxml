@@ -50,27 +50,27 @@
                   <Font size="37.0" />
                </font>
             </Label>
-            <Label layoutX="718.0" layoutY="321.0" text="1">
+            <Label fx:id="botCount" layoutX="718.0" layoutY="321.0" text="1">
                <font>
                   <Font size="37.0" />
                </font>
             </Label>
-            <Button layoutX="769.0" layoutY="295.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 10; -fx-background-color: #088214; -fx-border-color: #000000; -fx-border-radius: 10;" text="+" textFill="WHITE">
+            <Button fx:id="plusButton" layoutX="769.0" layoutY="295.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 10; -fx-background-color: #088214; -fx-border-color: #000000; -fx-border-radius: 10;" text="+" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="22.0" />
                </font>
             </Button>
-            <Button layoutX="769.0" layoutY="353.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 10; -fx-background-color: #9e0808; -fx-border-color: #000000; -fx-border-radius: 10;" text="-" textFill="WHITE">
+            <Button fx:id="minusButton" layoutX="769.0" layoutY="353.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 10; -fx-background-color: #9e0808; -fx-border-color: #000000; -fx-border-radius: 10;" text="-" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="22.0" />
                </font>
             </Button>
-            <TextField alignment="CENTER" layoutX="528.0" layoutY="448.0" prefHeight="50.0" prefWidth="242.0" promptText="Username" style="-fx-border-color: #f5d520; -fx-border-width: 5; -fx-border-radius: 10; -fx-background-radius: 10;">
+            <TextField fx:id="nameField" alignment="CENTER" layoutX="528.0" layoutY="448.0" prefHeight="50.0" prefWidth="242.0" promptText="Username" style="-fx-border-color: #f5d520; -fx-border-width: 5; -fx-border-radius: 10; -fx-background-radius: 10;">
                <font>
                   <Font size="23.0" />
                </font>
             </TextField>
-            <Button layoutX="593.0" layoutY="539.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0;" text="Start" textFill="WHITE">
+            <Button fx:id="startButton" layoutX="593.0" layoutY="539.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0;" text="Start" textFill="WHITE">
                <font>
                   <Font size="23.0" />
                </font>

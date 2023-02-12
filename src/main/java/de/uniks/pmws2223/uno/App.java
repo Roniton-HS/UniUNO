@@ -1,6 +1,7 @@
 package de.uniks.pmws2223.uno;
 
 import de.uniks.pmws2223.uno.controller.Controller;
+import de.uniks.pmws2223.uno.controller.SetupController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -18,7 +19,7 @@ public class App extends Application {
         primaryStage.setScene(new Scene(new Label("Loading...")));
         primaryStage.setTitle("Uno");
 
-        // TODO show initial controller
+        show(new SetupController(this));
         primaryStage.show();
 
         primaryStage.setOnCloseRequest(e -> controller.destroy());
