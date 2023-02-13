@@ -12,10 +12,11 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class SetupController implements Controller {
-    private App app;
+
+    //final objects
+    private final App app;
 
     public SetupController(App app) {
-
         this.app = app;
     }
 
@@ -39,8 +40,6 @@ public class SetupController implements Controller {
 
         // plus-minus buttons
         final Button plusButton = (Button) parent.lookup("#plusButton");
-        final Button minusButton = (Button) parent.lookup("#minusButton");
-
         plusButton.setOnAction(action -> {
             if (botCount.getText().equals("1")) {
                 botCount.setText("2");
@@ -49,6 +48,7 @@ public class SetupController implements Controller {
             }
         });
 
+        final Button minusButton = (Button) parent.lookup("#minusButton");
         minusButton.setOnAction(action -> {
             if (botCount.getText().equals("2")) {
                 botCount.setText("1");
@@ -57,12 +57,11 @@ public class SetupController implements Controller {
             }
         });
 
-        //text field
+        //text field for player
         final TextField nameField = (TextField) parent.lookup("#nameField");
 
         //start button
         final Button startButton = (Button) parent.lookup("#startButton");
-
         startButton.setOnAction(action ->{
             if(!nameField.getText().equals("")){
                 int bots = Integer.parseInt(botCount.getText());

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class GameOverController implements Controller {
+    //final objects
     private final Game game;
     private final boolean won;
     private final App app;
@@ -37,6 +38,7 @@ public class GameOverController implements Controller {
         //Load FXML
         final Parent parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/GameOver.fxml")));
 
+        //set main label
         final Label statusLabel = (Label) parent.lookup("#statusLabel");
         if (won) {
             statusLabel.setText("You Won! :)");
@@ -44,9 +46,11 @@ public class GameOverController implements Controller {
             statusLabel.setText("You Lost :(");
         }
 
+        //restart button
         final Button restartButton = (Button) parent.lookup("#restartButton");
         restartButton.setOnAction(action -> app.show(new IngameController(app, game.getPlayers().size() - 1, game.getPlayers().get(0).getName())));
 
+        //restart button
         final Button menuButton = (Button) parent.lookup("#menuButton");
         menuButton.setOnAction(action -> app.show(new SetupController(app)));
 

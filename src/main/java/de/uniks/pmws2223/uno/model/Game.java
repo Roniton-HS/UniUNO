@@ -8,35 +8,15 @@ import java.beans.PropertyChangeSupport;
 
 public class Game
 {
-   public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_CLOCKWISE = "clockwise";
    public static final String PROPERTY_PLAYERS = "players";
    public static final String PROPERTY_CURRENT_PLAYER = "currentPlayer";
    public static final String PROPERTY_CURRENT_CARD = "currentCard";
-   private String name;
    protected PropertyChangeSupport listeners;
    private boolean clockwise;
    private List<Player> players;
    private Player currentPlayer;
    private Card currentCard;
-
-   public String getName()
-   {
-      return this.name;
-   }
-
-   public Game setName(String value)
-   {
-      if (Objects.equals(value, this.name))
-      {
-         return this;
-      }
-
-      final String oldValue = this.name;
-      this.name = value;
-      this.firePropertyChange(PROPERTY_NAME, oldValue, value);
-      return this;
-   }
 
    public boolean isClockwise()
    {
@@ -181,14 +161,6 @@ public class Game
          this.listeners = new PropertyChangeSupport(this);
       }
       return this.listeners;
-   }
-
-   @Override
-   public String toString()
-   {
-      final StringBuilder result = new StringBuilder();
-      result.append(' ').append(this.getName());
-      return result.substring(1);
    }
 
    public void removeYou()

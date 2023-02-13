@@ -1,6 +1,5 @@
 package de.uniks.pmws2223.uno.controller;
 
-import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
@@ -14,16 +13,15 @@ import java.util.Objects;
 
 public class CardController implements Controller {
 
+    //final objects
     private final Game game;
     private final Card card;
-    private final App app;
+    private final GameService gameService;
 
-    private final GameService gameService = new GameService();
-
-    public CardController(Game game, Card card, App app) {
+    public CardController(Game game, Card card) {
         this.game = game;
         this.card = card;
-        this.app = app;
+        gameService = new GameService();
     }
 
     @Override
@@ -52,58 +50,36 @@ public class CardController implements Controller {
             default -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/wildCard.fxml")));
         };
 
+        //button to play the card
         Button button = new Button();
+
+        //play cards on click
         if (card.getColor().equals("")) {
+            //wild card
             Button redButton = (Button) parent.lookup("#redButton");
-            redButton.setOnAction(action -> {
-                card.setColor("red");
-                if (gameService.playWildAs(game, card, "red")) {
-                    app.show(new GameOverController(game, true, app));
-                }
-                game.getCurrentPlayer().setDrewCard(false);
-            });
+            redButton.setOnAction(action -> wildCard("red"));
 
             Button blueButton = (Button) parent.lookup("#blueButton");
-            blueButton.setOnAction(action -> {
-                card.setColor("blue");
-                if (gameService.playWildAs(game, card, "blue")) {
-                    app.show(new GameOverController(game, true, app));
-                }
-                game.getCurrentPlayer().setDrewCard(false);
-            });
+            blueButton.setOnAction(action -> wildCard("blue"));
 
             Button yellowButton = (Button) parent.lookup("#yellowButton");
-            yellowButton.setOnAction(action -> {
-                card.setColor("yellow");
-                if (gameService.playWildAs(game, card, "yellow")) {
-                    app.show(new GameOverController(game, true, app));
-                }
-                game.getCurrentPlayer().setDrewCard(false);
-            });
+            yellowButton.setOnAction(action -> wildCard("yellow"));
 
             Button greenButton = (Button) parent.lookup("#greenButton");
-            greenButton.setOnAction(action -> {
-                card.setColor("yellow");
-                if (gameService.playWildAs(game, card, "green")) {
-                    app.show(new GameOverController(game, true, app));
-                }
-                game.getCurrentPlayer().setDrewCard(false);
-            });
+            greenButton.setOnAction(action -> wildCard("green"));
 
         } else {
-            //action on card click
+            //normal card
             button = (Button) parent.lookup("#cardButton");
             button.setOnAction(action -> {
-                game.getCurrentPlayer().setDrewCard(false);
-                if (game.getPlayers().get(0).getGame() != null) {
-                    if (gameService.playCard(game, card)) {
-                        app.show(new GameOverController(game, true, app));
-                    }
+                //players turn and card fits
+                if (game.getPlayers().get(0).getGame() != null && checkCard(card)) {
+                    gameService.playCard(game, card);
                 }
             });
         }
 
-        //display card type
+        //display card value
         button.setText(switch (card.getValue()) {
             case 10 -> "x";
             case 11 -> "+2";
@@ -113,6 +89,30 @@ public class CardController implements Controller {
         });
 
         return parent;
+    }
+
+    /**
+     * checks if a card fits to the discard pile
+     * checks if a card belongs to the player
+     *
+     * @param card card that is being checked
+     */
+    private boolean checkCard(Card card) {
+        Card c = game.getCurrentCard();
+        return c.getColor().equals(card.getColor()) || c.getValue() == card.getValue() || card.getValue() == 13 && card.getOwner() != null;
+    }
+
+    /**
+     * set the wild cards color and play it
+     *
+     * @param color color the wild card gets after being played
+     */
+    private void wildCard(String color) {
+        card.setColor(color);
+
+        if (game.getPlayers().get(0).getGame() != null) {
+            gameService.playCard(game, card);
+        }
     }
 
     @Override

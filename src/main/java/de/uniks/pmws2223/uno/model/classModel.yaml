@@ -24,7 +24,7 @@
   roles: 	player_cards 	player_game
 
 - game: 	org.fulib.classmodel.Clazz
-  attributes: 	game_name 	game_clockwise 	game_players
+  attributes: 	game_clockwise 	game_players
   model: 	c
   modified: 	false
   name: 	Game
@@ -125,15 +125,6 @@
   name: 	game
   other: 	game_currentPlayer
   propertyStyle: 	Bean
-
-- game_name: 	org.fulib.classmodel.Attribute
-  clazz: 	game
-  id: 	Game_name
-  modified: 	false
-  name: 	name
-  propertyStyle: 	Bean
-  type: 	String
-  typeSignature: 	String
 
 - game_clockwise: 	org.fulib.classmodel.Attribute
   clazz: 	game

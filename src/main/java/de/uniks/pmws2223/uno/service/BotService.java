@@ -12,26 +12,48 @@ import java.util.TimerTask;
 
 public class BotService {
 
-    GameService gameService = new GameService();
+    //final objects
+    private final GameService gameService = new GameService();
 
+    /**
+     * checks for a fitting card in the bots hand
+     * prioritizes non-wild cards
+     *
+     * @param game   game object
+     * @param player bot that is being checked
+     * @return fitting card
+     */
     public Card checkCard(Game game, Player player) {
         Card currCard = game.getCurrentCard();
         List<Card> cards = player.getCards();
 
+        //check for non-wild cards
         for (Card c : cards) {
             if (c.getColor().equals(currCard.getColor())
                     || c.getValue() != 13 && c.getValue() == currCard.getValue()) {
                 return c;
             }
         }
+
+        //check for wild cards
         for (Card c : cards) {
             if (c.getValue() == 13) {
                 return c;
             }
         }
+
         return null;
     }
 
+    /**
+     * plays one bot round
+     *
+     * play first fitting card in deck
+     * else draw a card and end turn
+     *
+     * @param game game object
+     * @param player bot that is playing
+     */
     public void playRound(Game game, Player player) {
         Card card = checkCard(game, player);
         if (card != null) {
@@ -41,8 +63,15 @@ public class BotService {
         }
     }
 
+    /**
+     * plays a bots card
+     * random wild card color
+     * wait 2 seconds before play
+     *
+     * @param game game the card is being played to
+     * @param card card that is being played
+     */
     public void playCardWithDelay(Game game, Card card) {
-
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -51,22 +80,27 @@ public class BotService {
                     if (card.getValue() == 13) {
                         Random r = new Random();
                         int randColor = r.nextInt(4);
-                        gameService.playWildAs(game, card, switch (randColor) {
+                        card.setColor(switch (randColor) {
                             case 0 -> "red";
                             case 1 -> "blue";
                             case 2 -> "yellow";
                             case 3 -> "green";
                             default -> "";
                         });
-
-                    } else {
-                        gameService.playCard(game, card);
                     }
+                    gameService.playCard(game, card);
                 });
             }
         }, 2000);
     }
 
+    /**
+     * draws a card and ends turn
+     * wait 1 second
+     *
+     * @param game game object
+     * @param player bot that draws a card
+     */
     public void drawCardWithDelay(Game game, Player player) {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -77,6 +111,6 @@ public class BotService {
                     gameService.nextPlayer(game);
                 });
             }
-        }, 2000);
+        }, 1000);
     }
 }

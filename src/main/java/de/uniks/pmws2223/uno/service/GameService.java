@@ -9,6 +9,11 @@ import java.util.Random;
 
 public class GameService {
 
+    /**
+     * creates a new card
+     *
+     * @return randomized Card
+     */
     public Card randomCard() {
         Random r = new Random();
         int randValue = r.nextInt((13 - 1) + 1) + 1;
@@ -32,6 +37,11 @@ public class GameService {
         return card;
     }
 
+    /**
+     * gives a player a random new card
+     *
+     * @param player who draws a card
+     */
     public void drawCard(Player player) {
         Card card = randomCard();
         player.withCards(card);
@@ -39,6 +49,11 @@ public class GameService {
         System.out.println(player.getName() + " draws a card");
     }
 
+    /**
+     * gives a player 7 random cards
+     *
+     * @param player player who draws cards
+     */
     public void initDraw(Player player) {
         for (int i = 0; i < 7; i++) {
             drawCard(player);
@@ -46,61 +61,73 @@ public class GameService {
         player.setDrewCard(false);
     }
 
-    public boolean playCard(Game game, Card card) {
+    /**
+     * plays a card to the discard pile
+     * resets player draws
+     * <p>
+     * 10 -> skip player
+     * 11 -> draw 2 card + skip
+     * 12 -> change direction
+     *
+     * @param game game the card will be played in
+     * @param card card that is being played
+     */
+    public void playCard(Game game, Card card) {
+
+        game.setCurrentCard(card);
+
         Player owner = card.getOwner();
-        if (card.getOwner() != null) {
-            if (card.getColor().equals(game.getCurrentCard().getColor()) || card.getValue() == game.getCurrentCard().getValue() || card.getValue() == 13) {
-                game.setCurrentCard(card);
-                owner.withoutCards(card);
-                System.out.println("(" + game.getCurrentPlayer() + ") " + getCardName(card));
+        owner.withoutCards(card);
+        owner.setDrewCard(false);
 
-                if (owner.getCards().size() == 0) {
-                    return true;
-                }
-
-                if (card.getValue() == 10) {
+        //bonus card effects
+        switch (card.getValue()) {
+            case 10 -> skipPlayer(game);
+            case 11 -> {
+                drawCard(getNextPlayer(game));
+                drawCard(getNextPlayer(game));
+                skipPlayer(game);
+            }
+            case 12 -> {
+                if (game.getPlayers().size() == 2) {
                     skipPlayer(game);
-                } else if (card.getValue() == 11) {
-                    drawCard(getNextPlayer(game));
-                    drawCard(getNextPlayer(game));
-                    skipPlayer(game);
-                } else if (card.getValue() == 12) {
-                    if (game.getPlayers().size() == 2) {
-                        skipPlayer(game);
-                    } else {
-                        game.setClockwise(!game.isClockwise());
-                        nextPlayer(game);
-                    }
-
                 } else {
+                    game.setClockwise(!game.isClockwise());
                     nextPlayer(game);
                 }
             }
-            if(game.getCurrentPlayer() == owner && owner.isBot()){
-                BotService botService = new BotService();
-                botService.playRound(game, owner);
-            }
+            default -> nextPlayer(game);
         }
-        return false;
+
+        //reactivate bot if 2 player and bot skips
+        if (game.getCurrentPlayer() == owner && owner.isBot()) {
+            BotService botService = new BotService();
+            botService.playRound(game, owner);
+        }
+
     }
 
-    public boolean playWildAs(Game game, Card card, String color) {
-        card.setColor(color);
-        return playCard(game, card);
-    }
-
+    /**
+     * @return next player to play
+     *
+     * can go 2 directions
+     *
+     * @param game game object
+     */
     public Player getNextPlayer(Game game) {
         Player currPlayer = game.getCurrentPlayer();
         List<Player> players = game.getPlayers();
         int playerIndex = players.indexOf(currPlayer);
 
         if (game.isClockwise()) {
+            //clockwise
             if (playerIndex < players.size() - 1) {
                 return players.get(playerIndex + 1);
             } else {
                 return players.get(0);
             }
         } else {
+            //counterclockwise
             if (playerIndex > 0) {
                 return players.get(playerIndex - 1);
             } else {
@@ -109,17 +136,28 @@ public class GameService {
         }
     }
 
+    /**
+     * sets the next player
+     * @param game game object
+     */
     public void nextPlayer(Game game) {
         game.setCurrentPlayer(getNextPlayer(game));
         game.getCurrentPlayer().setDrewCard(false);
     }
 
+    /**
+     * skips a player and sets the next player
+     * can go in 2 directions
+     * @param game game object
+     */
     public void skipPlayer(Game game) {
         Player currPlayer = game.getCurrentPlayer();
         List<Player> players = game.getPlayers();
         int playerIndex = players.indexOf(currPlayer);
 
+
         if (game.isClockwise()) {
+            //clockwise
             if (playerIndex < players.size() - 2) {
                 game.setCurrentPlayer(players.get(playerIndex + 2));
             } else if (playerIndex < players.size() - 1) {
@@ -128,6 +166,7 @@ public class GameService {
                 game.setCurrentPlayer(players.get(1));
             }
         } else {
+            //counterclockwise
             if (playerIndex > 1) {
                 game.setCurrentPlayer(players.get(playerIndex - 2));
             } else if (playerIndex > 0) {
@@ -138,21 +177,12 @@ public class GameService {
         }
     }
 
-    public String getCardName(Card card) {
-        int val = card.getValue();
-        String out = card.getColor() + " ";
-        if (val == 10) {
-            out += "skip";
-        } else if (val == 11) {
-            out += "draw 2";
-        } else if (val == 12) {
-            out += "reverse";
-        } else {
-            out += val;
-        }
-        return out;
-    }
-
+    /**
+     * checks if a player has a fitting card to the discard pile
+     * @param game game object
+     * @param player player who's cards are being checked
+     * @return return the fitting card
+     */
     public Card checkCards(Game game, Player player) {
         Card currCard = game.getCurrentCard();
         List<Card> cards = player.getCards();

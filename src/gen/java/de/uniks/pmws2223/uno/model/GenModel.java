@@ -10,8 +10,6 @@ import java.util.List;
 public class GenModel implements ClassModelDecorator {
     public class Game{
 
-        String name;
-
         boolean clockwise;
 
         List<Player> players;

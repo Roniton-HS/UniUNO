@@ -20,25 +20,29 @@ import java.util.List;
 import java.util.Objects;
 
 public class IngameController implements Controller {
+    //final objects
     private final App app;
     private final int botCount;
     private final String playerName;
-    private final Game game = new Game();
+    private final Game game;
 
+    //listeners
     private PropertyChangeListener cardListener;
     private PropertyChangeListener currentCardListener;
     private PropertyChangeListener currentPlayerListener;
 
+    //services
     private final GameService gameService = new GameService();
     private final BotService botService = new BotService();
 
+    //lists
     private final List<Controller> subControllers = new ArrayList<>();
 
-    public IngameController(App app, int bots, String text) {
-
+    public IngameController(App app, int botCount, String playerName) {
         this.app = app;
-        botCount = bots;
-        playerName = text;
+        this.botCount = botCount;
+        this.playerName = playerName;
+        game = new Game();
     }
 
     @Override
@@ -48,38 +52,60 @@ public class IngameController implements Controller {
 
     @Override
     public void init() {
-
-        Player human = new Player().setName(playerName).setBot(false);
-        gameService.initDraw(human);
-
         game.setClockwise(true);
-        game.setName("UNO");
-        game.withPlayers(human);
-        game.setCurrentPlayer(human);
         game.setCurrentCard(gameService.randomCard());
 
+        //add human to the game
+        Player human = new Player().setName(playerName).setBot(false);
+        gameService.initDraw(human);
+        game.withPlayers(human);
+        game.setCurrentPlayer(human);
+
+        //add bots to the game
         for (int i = 0; i < botCount; i++) {
             Player bot = new Player().setName("Bot " + i).setBot(true);
             gameService.initDraw(bot);
             game.withPlayers(bot);
         }
+
+        //trigger bot logic
+        currentPlayerListener = currentPlayerListener -> {
+            Player currPlayer = game.getCurrentPlayer();
+            System.out.println("-> " + currPlayer.getName());
+            if (currPlayer.isBot()) {
+                botService.playRound(game, currPlayer);
+            }
+        };
+        game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
     }
 
 
     @Override
     public Parent render() throws IOException {
-        Player human = game.getPlayers().get(0);
-
         //Load FXML
         final Parent parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Ingame.fxml")));
-
-        renderBots(parent);
 
         //quit button
         final Button quitButton = (Button) parent.lookup("#quitButton");
         quitButton.setOnAction(action -> app.show(new SetupController(app)));
 
-        //draw button
+        Player human = game.getPlayers().get(0);
+
+        renderDrawButton(parent, human);
+        renderBots(parent);
+        renderHumanCards(parent, human);
+        renderCurrentCards(parent);
+
+        return parent;
+    }
+
+    /**
+     * renders the draw button that can be used to draw a card as the human
+     *
+     * @param parent JavaFX parent
+     * @param human player that plays the game
+     */
+    public void renderDrawButton(Parent parent, Player human){
         final Button drawButton = (Button) parent.lookup("#drawButton");
         drawButton.setOnAction(action -> {
             if (human.getGame() != null && !human.isDrewCard()) {
@@ -89,13 +115,25 @@ public class IngameController implements Controller {
                 }
             }
         });
+    }
 
+    /**
+     * renders the humans cards to the bottom of the screen
+     *
+     * @param parent JavaFX parent
+     * @param human player that plays the game
+     */
+    public void renderHumanCards(Parent parent, Player human) {
         //first render cards
         final HBox humanCards = (HBox) parent.lookup("#humanCards");
         for (Card c : human.getCards()) {
-            CardController cardController = new CardController(game, c, app);
+            CardController cardController = new CardController(game, c);
             subControllers.add(cardController);
-            humanCards.getChildren().add(cardController.render());
+            try {
+                humanCards.getChildren().add(cardController.render());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         //card listener
@@ -103,34 +141,29 @@ public class IngameController implements Controller {
             humanCards.getChildren().clear();
             for (Card c : human.getCards()) {
                 try {
-                    CardController cardController = new CardController(game, c, app);
+                    CardController cardController = new CardController(game, c);
                     subControllers.add(cardController);
                     humanCards.getChildren().add(cardController.render());
+
+                    if (human.getCards().size() == 0) {
+                        app.show(new GameOverController(game, true, app));
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
         human.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
-
-        renderCurrentCards(parent);
-
-        currentPlayerListener = currentPlayerListener -> {
-            Player currPlayer = game.getCurrentPlayer();
-            System.out.println("-> " + currPlayer.getName());
-            if (currPlayer.isBot()) {
-                botService.playRound(game, currPlayer);
-            }
-        };
-        game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
-
-        return parent;
     }
 
+    /**
+     * renders the top discard pile card
+     * @param parent JavaFX parent
+     */
     public void renderCurrentCards(Parent parent) throws IOException {
         //first render current card
         final VBox discardPile = (VBox) parent.lookup("#discardPile");
-        CardController cardController = new CardController(game, game.getCurrentCard(), app);
+        CardController cardController = new CardController(game, game.getCurrentCard());
         subControllers.add(cardController);
         discardPile.getChildren().add(cardController.render());
 
@@ -138,7 +171,7 @@ public class IngameController implements Controller {
         currentCardListener = currentCardListener -> {
             discardPile.getChildren().clear();
             try {
-                CardController cController = new CardController(game, game.getCurrentCard(), app);
+                CardController cController = new CardController(game, game.getCurrentCard());
                 subControllers.add(cController);
                 discardPile.getChildren().add(cController.render());
             } catch (IOException e) {
@@ -148,6 +181,10 @@ public class IngameController implements Controller {
         game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_CARD, currentCardListener);
     }
 
+    /**
+     * creates a subcontroller for each bot
+     * @param parent JavaFX parent
+     */
     public void renderBots(Parent parent) throws IOException {
 
         //first render bots
