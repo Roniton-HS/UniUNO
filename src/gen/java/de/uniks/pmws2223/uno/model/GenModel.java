@@ -12,10 +12,11 @@ public class GenModel implements ClassModelDecorator {
 
         String name;
 
-        @Link("game")
+        boolean clockwise;
+
         List<Player> players;
 
-        @Link
+        @Link("game")
         Player currentPlayer;
 
         @Link
@@ -26,12 +27,14 @@ public class GenModel implements ClassModelDecorator {
 
         String name;
 
+        boolean drewCard;
+
         boolean bot;
 
         @Link("owner")
         List<Card> cards;
 
-        @Link("players")
+        @Link("currentPlayer")
         Game game;
     }
 

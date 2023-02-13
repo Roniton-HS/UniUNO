@@ -5,6 +5,7 @@ import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
 import de.uniks.pmws2223.uno.model.Player;
+import de.uniks.pmws2223.uno.service.BotService;
 import de.uniks.pmws2223.uno.service.GameService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,15 +18,17 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class IngameController implements Controller {
-    private App app;
-    private int botCount;
-    private String playerName;
-    private Game game = new Game();
+    private final App app;
+    private final int botCount;
+    private final String playerName;
+    private final Game game = new Game();
 
     private PropertyChangeListener cardListener;
     private PropertyChangeListener currentCardListener;
+    private PropertyChangeListener currentPlayerListener;
 
     private final GameService gameService = new GameService();
+    private final BotService botService = new BotService();
 
     public IngameController(App app, int bots, String text) {
 
@@ -42,17 +45,27 @@ public class IngameController implements Controller {
     @Override
     public void init() {
 
-        game.withPlayers(new Player().setName(playerName).setBot(false));
+        Player human = new Player().setName(playerName).setBot(false);
+        gameService.initDraw(human);
+
+        game.setClockwise(true);
+        game.setName("UNO");
+        game.withPlayers(human);
+        game.setCurrentPlayer(human);
+        game.setCurrentCard(gameService.randomCard());
 
         for (int i = 0; i < botCount; i++) {
-            game.withPlayers(new Player().setName("Bot " + i).setBot(true).withCards(new Card()));
+            Player bot = new Player().setName("Bot " + i).setBot(true);
+            gameService.initDraw(bot);
+            game.withPlayers(bot);
         }
-
-        game.setCurrentCard(gameService.drawCard());
     }
+
 
     @Override
     public Parent render() throws IOException {
+        Player human = game.getPlayers().get(0);
+
         //Load FXML
         final Parent parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Ingame.fxml")));
 
@@ -64,18 +77,30 @@ public class IngameController implements Controller {
 
         //draw button
         final Button drawButton = (Button) parent.lookup("#drawButton");
-        drawButton.setOnAction(action -> game.getPlayers().get(0).withCards(gameService.drawCard()));
+        drawButton.setOnAction(action -> {
+            if (human.getGame() != null && !human.isDrewCard()) {
+                gameService.drawCard(human);
+            }
+        });
 
+        //pass button
+        final Button passButton = (Button) parent.lookup("#passButton");
+        passButton.setOnAction(action -> {
+            if (human.getGame() != null && human.isDrewCard()) {
+                gameService.nextPlayer(game);
+            }
+        });
+
+        //first render cards
         final HBox humanCards = (HBox) parent.lookup("#humanCards");
-
-        for (Card c : game.getPlayers().get(0).getCards()) {
+        for (Card c : human.getCards()) {
             humanCards.getChildren().add(new CardController(game, c).render());
         }
 
         //card listener
         cardListener = cardListener -> {
             humanCards.getChildren().clear();
-            for (Card c : game.getPlayers().get(0).getCards()) {
+            for (Card c : human.getCards()) {
                 try {
                     humanCards.getChildren().add(new CardController(game, c).render());
                 } catch (IOException e) {
@@ -83,14 +108,29 @@ public class IngameController implements Controller {
                 }
             }
         };
-        game.getPlayers().get(0).listeners().addPropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
+        human.listeners().addPropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
 
+        renderCurrentCards(parent);
+
+        currentPlayerListener = currentPlayerListener -> {
+            Player currPlayer = game.getCurrentPlayer();
+            System.out.println("-> " + currPlayer.getName());
+            if (currPlayer.isBot()) {
+                botService.playRound(game, currPlayer);
+            }
+        };
+        game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
+
+        return parent;
+    }
+
+    public void renderCurrentCards(Parent parent) throws IOException {
         //first render current card
         final VBox discardPile = (VBox) parent.lookup("#discardPile");
         discardPile.getChildren().add(new CardController(game, game.getCurrentCard()).render());
 
         //current card listener
-        currentCardListener = currentCardListener ->{
+        currentCardListener = currentCardListener -> {
             discardPile.getChildren().clear();
             try {
                 discardPile.getChildren().add(new CardController(game, game.getCurrentCard()).render());
@@ -99,8 +139,6 @@ public class IngameController implements Controller {
             }
         };
         game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_CARD, currentCardListener);
-
-        return parent;
     }
 
     public void renderBots(Parent parent) throws IOException {

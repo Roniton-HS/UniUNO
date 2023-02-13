@@ -10,13 +10,15 @@ public class Player
 {
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_CARDS = "cards";
-   public static final String PROPERTY_GAME = "game";
    public static final String PROPERTY_BOT = "bot";
+   public static final String PROPERTY_DREW_CARD = "drewCard";
+   public static final String PROPERTY_GAME = "game";
    private String name;
    private List<Card> cards;
-   private Game game;
    protected PropertyChangeSupport listeners;
    private boolean bot;
+   private boolean drewCard;
+   private Game game;
 
    public String getName()
    {
@@ -102,6 +104,42 @@ public class Player
       return this;
    }
 
+   public boolean isBot()
+   {
+      return this.bot;
+   }
+
+   public Player setBot(boolean value)
+   {
+      if (value == this.bot)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.bot;
+      this.bot = value;
+      this.firePropertyChange(PROPERTY_BOT, oldValue, value);
+      return this;
+   }
+
+   public boolean isDrewCard()
+   {
+      return this.drewCard;
+   }
+
+   public Player setDrewCard(boolean value)
+   {
+      if (value == this.drewCard)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.drewCard;
+      this.drewCard = value;
+      this.firePropertyChange(PROPERTY_DREW_CARD, oldValue, value);
+      return this;
+   }
+
    public Game getGame()
    {
       return this.game;
@@ -118,32 +156,14 @@ public class Player
       if (this.game != null)
       {
          this.game = null;
-         oldValue.withoutPlayers(this);
+         oldValue.setCurrentPlayer(null);
       }
       this.game = value;
       if (value != null)
       {
-         value.withPlayers(this);
+         value.setCurrentPlayer(this);
       }
       this.firePropertyChange(PROPERTY_GAME, oldValue, value);
-      return this;
-   }
-
-   public boolean isBot()
-   {
-      return this.bot;
-   }
-
-   public Player setBot(boolean value)
-   {
-      if (value == this.bot)
-      {
-         return this;
-      }
-
-      final boolean oldValue = this.bot;
-      this.bot = value;
-      this.firePropertyChange(PROPERTY_BOT, oldValue, value);
       return this;
    }
 

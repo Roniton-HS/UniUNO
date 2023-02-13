@@ -9,12 +9,14 @@ import java.beans.PropertyChangeSupport;
 public class Game
 {
    public static final String PROPERTY_NAME = "name";
+   public static final String PROPERTY_CLOCKWISE = "clockwise";
    public static final String PROPERTY_PLAYERS = "players";
    public static final String PROPERTY_CURRENT_PLAYER = "currentPlayer";
    public static final String PROPERTY_CURRENT_CARD = "currentCard";
    private String name;
-   private List<Player> players;
    protected PropertyChangeSupport listeners;
+   private boolean clockwise;
+   private List<Player> players;
    private Player currentPlayer;
    private Card currentCard;
 
@@ -36,6 +38,24 @@ public class Game
       return this;
    }
 
+   public boolean isClockwise()
+   {
+      return this.clockwise;
+   }
+
+   public Game setClockwise(boolean value)
+   {
+      if (value == this.clockwise)
+      {
+         return this;
+      }
+
+      final boolean oldValue = this.clockwise;
+      this.clockwise = value;
+      this.firePropertyChange(PROPERTY_CLOCKWISE, oldValue, value);
+      return this;
+   }
+
    public List<Player> getPlayers()
    {
       return this.players != null ? Collections.unmodifiableList(this.players) : Collections.emptyList();
@@ -47,10 +67,8 @@ public class Game
       {
          this.players = new ArrayList<>();
       }
-      if (!this.players.contains(value))
+      if (this.players.add(value))
       {
-         this.players.add(value);
-         value.setGame(this);
          this.firePropertyChange(PROPERTY_PLAYERS, null, value);
       }
       return this;
@@ -76,9 +94,8 @@ public class Game
 
    public Game withoutPlayers(Player value)
    {
-      if (this.players != null && this.players.remove(value))
+      if (this.players != null && this.players.removeAll(Collections.singleton(value)))
       {
-         value.setGame(null);
          this.firePropertyChange(PROPERTY_PLAYERS, value, null);
       }
       return this;
@@ -115,7 +132,16 @@ public class Game
       }
 
       final Player oldValue = this.currentPlayer;
+      if (this.currentPlayer != null)
+      {
+         this.currentPlayer = null;
+         oldValue.setGame(null);
+      }
       this.currentPlayer = value;
+      if (value != null)
+      {
+         value.setGame(this);
+      }
       this.firePropertyChange(PROPERTY_CURRENT_PLAYER, oldValue, value);
       return this;
    }
@@ -167,7 +193,6 @@ public class Game
 
    public void removeYou()
    {
-      this.withoutPlayers(new ArrayList<>(this.getPlayers()));
       this.setCurrentPlayer(null);
       this.setCurrentCard(null);
    }
