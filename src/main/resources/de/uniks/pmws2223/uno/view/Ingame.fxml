@@ -77,14 +77,6 @@
                   <Font name="System Bold" size="26.0" />
                </font>
             </Button>
-            <Button fx:id="passButton" layoutX="577.0" layoutY="473.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #9e0808;" text="Pass" textFill="WHITE">
-               <font>
-                  <Font size="23.0" />
-               </font>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
          </children>
       </AnchorPane>
    </children>

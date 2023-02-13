@@ -90,14 +90,6 @@ public class IngameController implements Controller {
             }
         });
 
-        //pass button
-        final Button passButton = (Button) parent.lookup("#passButton");
-        passButton.setOnAction(action -> {
-            if (human.getGame() != null && human.isDrewCard()) {
-                gameService.nextPlayer(game);
-            }
-        });
-
         //first render cards
         final HBox humanCards = (HBox) parent.lookup("#humanCards");
         for (Card c : human.getCards()) {

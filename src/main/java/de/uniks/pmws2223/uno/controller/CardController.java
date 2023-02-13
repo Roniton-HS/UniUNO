@@ -16,7 +16,7 @@ public class CardController implements Controller {
 
     private final Game game;
     private final Card card;
-    private App app;
+    private final App app;
 
     private final GameService gameService = new GameService();
 
