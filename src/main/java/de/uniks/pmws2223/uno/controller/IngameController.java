@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class IngameController implements Controller {
@@ -29,6 +31,8 @@ public class IngameController implements Controller {
 
     private final GameService gameService = new GameService();
     private final BotService botService = new BotService();
+
+    private final List<Controller> subControllers = new ArrayList<>();
 
     public IngameController(App app, int bots, String text) {
 
@@ -80,6 +84,9 @@ public class IngameController implements Controller {
         drawButton.setOnAction(action -> {
             if (human.getGame() != null && !human.isDrewCard()) {
                 gameService.drawCard(human);
+                if (gameService.checkCards(game, human) == null) {
+                    gameService.nextPlayer(game);
+                }
             }
         });
 
@@ -94,7 +101,9 @@ public class IngameController implements Controller {
         //first render cards
         final HBox humanCards = (HBox) parent.lookup("#humanCards");
         for (Card c : human.getCards()) {
-            humanCards.getChildren().add(new CardController(game, c).render());
+            CardController cardController = new CardController(game, c, app);
+            subControllers.add(cardController);
+            humanCards.getChildren().add(cardController.render());
         }
 
         //card listener
@@ -102,7 +111,9 @@ public class IngameController implements Controller {
             humanCards.getChildren().clear();
             for (Card c : human.getCards()) {
                 try {
-                    humanCards.getChildren().add(new CardController(game, c).render());
+                    CardController cardController = new CardController(game, c, app);
+                    subControllers.add(cardController);
+                    humanCards.getChildren().add(cardController.render());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -127,13 +138,17 @@ public class IngameController implements Controller {
     public void renderCurrentCards(Parent parent) throws IOException {
         //first render current card
         final VBox discardPile = (VBox) parent.lookup("#discardPile");
-        discardPile.getChildren().add(new CardController(game, game.getCurrentCard()).render());
+        CardController cardController = new CardController(game, game.getCurrentCard(), app);
+        subControllers.add(cardController);
+        discardPile.getChildren().add(cardController.render());
 
         //current card listener
         currentCardListener = currentCardListener -> {
             discardPile.getChildren().clear();
             try {
-                discardPile.getChildren().add(new CardController(game, game.getCurrentCard()).render());
+                CardController cController = new CardController(game, game.getCurrentCard(), app);
+                subControllers.add(cController);
+                discardPile.getChildren().add(cController.render());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -145,22 +160,32 @@ public class IngameController implements Controller {
 
         //first render bots
         final VBox botSpace1 = (VBox) parent.lookup("#botSpace1");
-        botSpace1.getChildren().add(new BotController(game.getPlayers().get(1)).render());
+        BotController botController1 = new BotController(app, game, game.getPlayers().get(1));
+        subControllers.add(botController1);
+        botSpace1.getChildren().add(botController1.render());
 
         if (botCount > 1) {
             final VBox botSpace2 = (VBox) parent.lookup("#botSpace2");
-            botSpace2.getChildren().add(new BotController(game.getPlayers().get(2)).render());
+            BotController botController2 = new BotController(app, game, game.getPlayers().get(2));
+            subControllers.add(botController2);
+            botSpace2.getChildren().add(botController2.render());
         }
 
         if (botCount > 2) {
             final VBox botSpace3 = (VBox) parent.lookup("#botSpace3");
-            botSpace3.getChildren().add(new BotController(game.getPlayers().get(2)).render());
+            BotController botController3 = new BotController(app, game, game.getPlayers().get(3));
+            subControllers.add(botController3);
+            botSpace3.getChildren().add(botController3.render());
         }
     }
 
     @Override
     public void destroy() {
+        for (Controller c : subControllers) {
+            c.destroy();
+        }
         game.getPlayers().get(0).listeners().removePropertyChangeListener(Player.PROPERTY_CARDS, cardListener);
         game.listeners().removePropertyChangeListener(Game.PROPERTY_CURRENT_CARD, currentCardListener);
+        game.listeners().removePropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
     }
 }

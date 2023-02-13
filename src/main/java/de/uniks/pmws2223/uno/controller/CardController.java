@@ -1,5 +1,6 @@
 package de.uniks.pmws2223.uno.controller;
 
+import de.uniks.pmws2223.uno.App;
 import de.uniks.pmws2223.uno.Main;
 import de.uniks.pmws2223.uno.model.Card;
 import de.uniks.pmws2223.uno.model.Game;
@@ -15,12 +16,14 @@ public class CardController implements Controller {
 
     private final Game game;
     private final Card card;
+    private App app;
 
     private final GameService gameService = new GameService();
 
-    public CardController(Game game, Card card) {
+    public CardController(Game game, Card card, App app) {
         this.game = game;
         this.card = card;
+        this.app = app;
     }
 
     @Override
@@ -46,19 +49,66 @@ public class CardController implements Controller {
 
             case "blue" -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/BlueCard.fxml")));
 
-            default -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Card.fxml")));
+            default -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/wildCard.fxml")));
         };
 
-        //action on card click
-        final Button button = (Button) parent.lookup("#cardButton");
-        button.setOnAction(action -> gameService.playCard(game, card));
+        Button button = new Button();
+        if (card.getColor().equals("")) {
+            Button redButton = (Button) parent.lookup("#redButton");
+            redButton.setOnAction(action -> {
+                card.setColor("red");
+                if (gameService.playWildAs(game, card, "red")) {
+                    app.show(new GameOverController(game, true, app));
+                }
+                game.getCurrentPlayer().setDrewCard(false);
+            });
+
+            Button blueButton = (Button) parent.lookup("#blueButton");
+            blueButton.setOnAction(action -> {
+                card.setColor("blue");
+                if (gameService.playWildAs(game, card, "blue")) {
+                    app.show(new GameOverController(game, true, app));
+                }
+                game.getCurrentPlayer().setDrewCard(false);
+            });
+
+            Button yellowButton = (Button) parent.lookup("#yellowButton");
+            yellowButton.setOnAction(action -> {
+                card.setColor("yellow");
+                if (gameService.playWildAs(game, card, "yellow")) {
+                    app.show(new GameOverController(game, true, app));
+                }
+                game.getCurrentPlayer().setDrewCard(false);
+            });
+
+            Button greenButton = (Button) parent.lookup("#greenButton");
+            greenButton.setOnAction(action -> {
+                card.setColor("yellow");
+                if (gameService.playWildAs(game, card, "green")) {
+                    app.show(new GameOverController(game, true, app));
+                }
+                game.getCurrentPlayer().setDrewCard(false);
+            });
+
+        } else {
+            //action on card click
+            button = (Button) parent.lookup("#cardButton");
+            button.setOnAction(action -> {
+                game.getCurrentPlayer().setDrewCard(false);
+                if (game.getPlayers().get(0).getGame() != null) {
+                    if (gameService.playCard(game, card)) {
+                        app.show(new GameOverController(game, true, app));
+                    }
+                }
+            });
+        }
 
         //display card type
         button.setText(switch (card.getValue()) {
             case 10 -> "x";
             case 11 -> "+2";
             case 12 -> "<->";
-            case 13 -> "w";
+            case 13 -> "";
             default -> String.valueOf(card.getValue());
         });
 
