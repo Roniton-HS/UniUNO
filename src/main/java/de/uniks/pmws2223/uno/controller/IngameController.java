@@ -55,7 +55,6 @@ public class IngameController implements Controller {
     public void init() {
         game.setClockwise(true);
         game.setCurrentCard(gameService.randomCard());
-        game.setCurrentCard(new Card().setValue(13).setColor(""));
 
         //add human to the game
         Player human = new Player().setName(playerName).setBot(false);

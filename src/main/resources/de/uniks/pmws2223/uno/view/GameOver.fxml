@@ -44,8 +44,8 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <Pane layoutX="362.0" layoutY="133.0" prefHeight="370.0" prefWidth="572.0" style="-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-border-width: 5;" />
-            <Button fx:id="restartButton" layoutX="593.0" layoutY="419.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0;" text="Restart" textFill="WHITE">
+            <Pane layoutX="362.0" layoutY="133.0" prefHeight="370.0" prefWidth="572.0" style="-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-border-width: 5; -fx-border-radius: 5; -fx-background-radius: 10;" />
+            <Button fx:id="restartButton" layoutX="593.0" layoutY="419.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0; -fx-border-color: #000000; -fx-border-radius: 10; -fx-border-width: 2;" text="Restart" textFill="WHITE">
                <font>
                   <Font size="23.0" />
                </font>
@@ -53,7 +53,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="menuButton" layoutX="593.0" layoutY="360.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0;" text="Menu" textFill="WHITE">
+            <Button fx:id="menuButton" layoutX="593.0" layoutY="360.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="112.0" style="-fx-background-radius: 10; -fx-background-color: #1949b0; -fx-border-width: 2; -fx-border-color: #000000; -fx-border-radius: 10;" text="Menu" textFill="WHITE">
                <font>
                   <Font size="23.0" />
                </font>
