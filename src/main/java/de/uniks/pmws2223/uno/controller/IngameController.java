@@ -141,16 +141,18 @@ public class IngameController implements Controller {
 
         //card listener
         cardListener = cardListener -> {
+            if (human.getCards().size() == 0) {
+                app.show(new GameOverController(game, true, app));
+            }
+
             humanCards.getChildren().clear();
             for (Card c : human.getCards()) {
                 try {
                     CardController cardController = new CardController(game, c);
                     subControllers.add(cardController);
                     humanCards.getChildren().add(cardController.render());
+                    System.out.println(human.getCards().size());
 
-                    if (human.getCards().size() == 0) {
-                        app.show(new GameOverController(game, true, app));
-                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
