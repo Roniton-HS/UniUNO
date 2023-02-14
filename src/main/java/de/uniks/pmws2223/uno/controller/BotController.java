@@ -7,6 +7,7 @@ import de.uniks.pmws2223.uno.model.Player;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.beans.PropertyChangeListener;
@@ -44,6 +45,9 @@ public class BotController implements Controller {
         //Load FXML
         final Parent parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Bot.fxml")));
 
+        //bot box
+        final VBox botBox = (VBox) parent.lookup("#botBox");
+
         //label for the bots name
         final Label botName = (Label) parent.lookup("#botName");
         botName.setTextFill(Color.color(0, 0, 0));
@@ -52,10 +56,9 @@ public class BotController implements Controller {
         //changes the color of the bots name to red if it's his turn
         gameListener = gameListener -> {
             if(bot.getGame() != null){
-                System.out.println(bot.getName());
-                botName.setTextFill(Color.color(1, 0, 0));
+                botBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ff0000; -fx-border-width: 5");
             }else {
-                botName.setTextFill(Color.color(0, 0, 0));
+                botBox.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-border-width: 5");
             }
         };
         bot.listeners().addPropertyChangeListener(Player.PROPERTY_GAME, gameListener);

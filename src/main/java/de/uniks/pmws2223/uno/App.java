@@ -16,6 +16,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
+        stage.setResizable(false);
         primaryStage.setScene(new Scene(new Label("Loading...")));
         primaryStage.setTitle("Uno");
 
@@ -28,6 +29,7 @@ public class App extends Application {
     public void show(Controller controller) {
         controller.init();
         try {
+            stage.centerOnScreen();
             stage.getScene().setRoot(controller.render());
         } catch (IOException ex) {
             ex.printStackTrace();

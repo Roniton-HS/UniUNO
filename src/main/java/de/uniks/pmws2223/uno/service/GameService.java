@@ -46,7 +46,6 @@ public class GameService {
         Card card = randomCard();
         player.withCards(card);
         player.setDrewCard(true);
-        System.out.println(player.getName() + " draws a card");
     }
 
     /**
@@ -180,7 +179,7 @@ public class GameService {
     /**
      * checks if a player has a fitting card to the discard pile
      * @param game game object
-     * @param player player who's cards are being checked
+     * @param player player whose cards are being checked
      * @return return the fitting card
      */
     public Card checkCards(Game game, Player player) {

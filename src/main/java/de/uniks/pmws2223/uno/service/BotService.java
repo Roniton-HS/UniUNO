@@ -89,6 +89,8 @@ public class BotService {
                         });
                     }
                     gameService.playCard(game, card);
+                    timer.purge();
+                    timer.cancel();
                 });
             }
         }, 2000);
@@ -109,6 +111,9 @@ public class BotService {
                 Platform.runLater(() -> {
                     gameService.drawCard(player);
                     gameService.nextPlayer(game);
+
+                    timer.purge();
+                    timer.cancel();
                 });
             }
         }, 1000);

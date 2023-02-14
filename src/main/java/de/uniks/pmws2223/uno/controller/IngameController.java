@@ -67,16 +67,6 @@ public class IngameController implements Controller {
             gameService.initDraw(bot);
             game.withPlayers(bot);
         }
-
-        //trigger bot logic
-        currentPlayerListener = currentPlayerListener -> {
-            Player currPlayer = game.getCurrentPlayer();
-            System.out.println("-> " + currPlayer.getName());
-            if (currPlayer.isBot()) {
-                botService.playRound(game, currPlayer);
-            }
-        };
-        game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
     }
 
 
@@ -91,10 +81,24 @@ public class IngameController implements Controller {
 
         Player human = game.getPlayers().get(0);
 
+        final HBox humanCards = (HBox) parent.lookup("#humanCards");
+        humanCards.setStyle("-fx-border-color: #ff0000; -fx-background-color: #ffffff; -fx-border-width: 5");
+        renderHumanCards(parent, human, humanCards);
         renderDrawButton(parent, human);
         renderBots(parent);
-        renderHumanCards(parent, human);
         renderCurrentCards(parent);
+
+        //trigger bot logic
+        currentPlayerListener = currentPlayerListener -> {
+            Player currPlayer = game.getCurrentPlayer();
+            if (currPlayer.isBot()) {
+                botService.playRound(game, currPlayer);
+                humanCards.setStyle("-fx-border-color: #000000; -fx-background-color: #ffffff; -fx-border-width: 5");
+            } else {
+                humanCards.setStyle("-fx-border-color: #ff0000; -fx-background-color: #ffffff; -fx-border-width: 5");
+            }
+        };
+        game.listeners().addPropertyChangeListener(Game.PROPERTY_CURRENT_PLAYER, currentPlayerListener);
 
         return parent;
     }
@@ -103,9 +107,9 @@ public class IngameController implements Controller {
      * renders the draw button that can be used to draw a card as the human
      *
      * @param parent JavaFX parent
-     * @param human player that plays the game
+     * @param human  player that plays the game
      */
-    public void renderDrawButton(Parent parent, Player human){
+    public void renderDrawButton(Parent parent, Player human) {
         final Button drawButton = (Button) parent.lookup("#drawButton");
         drawButton.setOnAction(action -> {
             if (human.getGame() != null && !human.isDrewCard()) {
@@ -121,11 +125,10 @@ public class IngameController implements Controller {
      * renders the humans cards to the bottom of the screen
      *
      * @param parent JavaFX parent
-     * @param human player that plays the game
+     * @param human  player that plays the game
      */
-    public void renderHumanCards(Parent parent, Player human) {
+    public void renderHumanCards(Parent parent, Player human, HBox humanCards) {
         //first render cards
-        final HBox humanCards = (HBox) parent.lookup("#humanCards");
         for (Card c : human.getCards()) {
             CardController cardController = new CardController(game, c);
             subControllers.add(cardController);
@@ -158,6 +161,7 @@ public class IngameController implements Controller {
 
     /**
      * renders the top discard pile card
+     *
      * @param parent JavaFX parent
      */
     public void renderCurrentCards(Parent parent) throws IOException {
@@ -183,6 +187,7 @@ public class IngameController implements Controller {
 
     /**
      * creates a subcontroller for each bot
+     *
      * @param parent JavaFX parent
      */
     public void renderBots(Parent parent) throws IOException {
