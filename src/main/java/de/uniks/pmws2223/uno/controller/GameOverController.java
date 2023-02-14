@@ -48,7 +48,7 @@ public class GameOverController implements Controller {
 
         //restart button
         final Button restartButton = (Button) parent.lookup("#restartButton");
-        restartButton.setOnAction(action -> app.show(new IngameController(app, game.getPlayers().size() - 1, game.getPlayers().get(0).getName())));
+        restartButton.setOnAction(action -> app.show(new IngameController(app, game.getPlayers().size() - 1, game.getPlayers().get(0).getName(), false)));
 
         //restart button
         final Button menuButton = (Button) parent.lookup("#menuButton");

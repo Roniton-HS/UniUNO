@@ -16,12 +16,14 @@ public class CardController implements Controller {
     //final objects
     private final Game game;
     private final Card card;
+    private int id;
     private final GameService gameService;
 
-    public CardController(Game game, Card card) {
+    public CardController(Game game, Card card, int id) {
         this.game = game;
         this.card = card;
-        gameService = new GameService();
+        this.id = id;
+        gameService = new GameService(false);
     }
 
     @Override
@@ -57,20 +59,19 @@ public class CardController implements Controller {
         if (card.getColor().equals("")) {
             //wild card
             Button redButton = (Button) parent.lookup("#redButton");
-            redButton.setOnAction(action -> wildCard("red"));
-
             Button blueButton = (Button) parent.lookup("#blueButton");
-            blueButton.setOnAction(action -> wildCard("blue"));
-
             Button yellowButton = (Button) parent.lookup("#yellowButton");
-            yellowButton.setOnAction(action -> wildCard("yellow"));
-
             Button greenButton = (Button) parent.lookup("#greenButton");
+
+            redButton.setOnAction(action -> wildCard("red"));
+            blueButton.setOnAction(action -> wildCard("blue"));
+            yellowButton.setOnAction(action -> wildCard("yellow"));
             greenButton.setOnAction(action -> wildCard("green"));
 
         } else {
             //normal card
             button = (Button) parent.lookup("#cardButton");
+            button.setId("cardButton" + id);
             button.setOnAction(action -> {
                 //players turn and card fits
                 if (game.getPlayers().get(0).getGame() != null && checkCard(card)) {
@@ -99,17 +100,17 @@ public class CardController implements Controller {
      */
     private boolean checkCard(Card card) {
         Card c = game.getCurrentCard();
-        return c.getColor().equals(card.getColor()) || c.getValue() == card.getValue() || card.getValue() == 13 && card.getOwner() != null;
+        return c.getColor().equals(card.getColor()) || c.getValue() == card.getValue() || card.getValue() == 13 && card.getOwner() != null || c.getColor().equals("");
     }
 
     /**
      * set the wild cards color and play it
+     * if the player is active
      *
      * @param color color the wild card gets after being played
      */
     private void wildCard(String color) {
         card.setColor(color);
-
         if (game.getPlayers().get(0).getGame() != null) {
             gameService.playCard(game, card);
         }

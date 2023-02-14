@@ -5,6 +5,7 @@ import de.uniks.pmws2223.uno.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -57,6 +58,9 @@ public class SetupController implements Controller {
             }
         });
 
+        //seeded checkbox
+        final CheckBox seedBox = (CheckBox) parent.lookup("#seedBox");
+
         //text field for player
         final TextField nameField = (TextField) parent.lookup("#nameField");
 
@@ -65,7 +69,7 @@ public class SetupController implements Controller {
         startButton.setOnAction(action ->{
             if(!nameField.getText().equals("")){
                 int bots = Integer.parseInt(botCount.getText());
-                app.show(new IngameController(app, bots, nameField.getText()));
+                    app.show(new IngameController(app, bots, nameField.getText(), seedBox.isSelected()));
             }
         });
 

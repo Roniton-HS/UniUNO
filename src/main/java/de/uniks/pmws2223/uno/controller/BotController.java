@@ -65,6 +65,7 @@ public class BotController implements Controller {
 
         //label for how many cards the bot owns
         final Label cardCount = (Label) parent.lookup("#cardCount");
+        cardCount.setId(bot.getName()+"CardCount");
         cardCount.setText("Cards: " + bot.getCards().size());
 
         //card listener

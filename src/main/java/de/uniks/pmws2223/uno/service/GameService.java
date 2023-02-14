@@ -8,6 +8,15 @@ import java.util.List;
 import java.util.Random;
 
 public class GameService {
+    Random r;
+
+    public GameService(boolean seed) {
+        if (seed){
+            r = new Random(100);
+        }else {
+            r = new Random();
+        }
+    }
 
     /**
      * creates a new card
@@ -15,26 +24,29 @@ public class GameService {
      * @return randomized Card
      */
     public Card randomCard() {
-        Random r = new Random();
         int randValue = r.nextInt((13 - 1) + 1) + 1;
-        int randColor = r.nextInt(4);
 
         Card card = new Card();
         card.setValue(randValue);
 
         if (randValue != 13) {
-            card.setColor(switch (randColor) {
-                case 0 -> "red";
-                case 1 -> "yellow";
-                case 2 -> "green";
-                case 3 -> "blue";
-                default -> "";
-            });
+            card.setColor(randomColor());
         } else {
             card.setColor("");
         }
 
         return card;
+    }
+
+    public String randomColor(){
+        int randColor = r.nextInt(4);
+        return switch (randColor) {
+            case 0 -> "red";
+            case 1 -> "yellow";
+            case 2 -> "green";
+            case 3 -> "blue";
+            default -> "";
+        };
     }
 
     /**

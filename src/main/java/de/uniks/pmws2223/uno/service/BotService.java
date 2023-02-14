@@ -13,7 +13,7 @@ import java.util.TimerTask;
 public class BotService {
 
     //final objects
-    private final GameService gameService = new GameService();
+    private final GameService gameService = new GameService(false);
 
     /**
      * checks for a fitting card in the bots hand

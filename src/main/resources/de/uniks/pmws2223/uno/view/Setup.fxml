@@ -34,6 +34,7 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -47,7 +48,10 @@
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <children>
-            <Pane layoutX="369.0" layoutY="61.0" prefHeight="585.0" prefWidth="561.0" style="-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-border-width: 5;" />
+            <Pane layoutX="369.0" layoutY="61.0" prefHeight="585.0" prefWidth="561.0" style="-fx-background-color: #ffffff; -fx-border-color: #000000; -fx-border-width: 5;">
+               <children>
+                  <CheckBox fx:id="seedBox" layoutX="244.0" layoutY="379.0" mnemonicParsing="false" text="seeded" />
+               </children></Pane>
             <Label layoutX="428.0" layoutY="359.0" text="Number of Bots:">
                <font>
                   <Font size="37.0" />

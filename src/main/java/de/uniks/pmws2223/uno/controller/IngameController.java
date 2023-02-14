@@ -32,17 +32,18 @@ public class IngameController implements Controller {
     private PropertyChangeListener currentPlayerListener;
 
     //services
-    private final GameService gameService = new GameService();
+    private final GameService gameService;
     private final BotService botService = new BotService();
 
     //lists
     private final List<Controller> subControllers = new ArrayList<>();
 
-    public IngameController(App app, int botCount, String playerName) {
+    public IngameController(App app, int botCount, String playerName, boolean seed) {
         this.app = app;
         this.botCount = botCount;
         this.playerName = playerName;
         game = new Game();
+        gameService = new GameService(seed);
     }
 
     @Override
@@ -54,6 +55,7 @@ public class IngameController implements Controller {
     public void init() {
         game.setClockwise(true);
         game.setCurrentCard(gameService.randomCard());
+        game.setCurrentCard(new Card().setValue(13).setColor(""));
 
         //add human to the game
         Player human = new Player().setName(playerName).setBot(false);
@@ -63,7 +65,7 @@ public class IngameController implements Controller {
 
         //add bots to the game
         for (int i = 0; i < botCount; i++) {
-            Player bot = new Player().setName("Bot " + i).setBot(true);
+            Player bot = new Player().setName("bot" + i).setBot(true);
             gameService.initDraw(bot);
             game.withPlayers(bot);
         }
@@ -81,9 +83,11 @@ public class IngameController implements Controller {
 
         Player human = game.getPlayers().get(0);
 
+        //box for the human card
         final HBox humanCards = (HBox) parent.lookup("#humanCards");
         humanCards.setStyle("-fx-border-color: #ff0000; -fx-background-color: #ffffff; -fx-border-width: 5");
-        renderHumanCards(parent, human, humanCards);
+
+        renderHumanCards(human, humanCards);
         renderDrawButton(parent, human);
         renderBots(parent);
         renderCurrentCards(parent);
@@ -124,13 +128,12 @@ public class IngameController implements Controller {
     /**
      * renders the humans cards to the bottom of the screen
      *
-     * @param parent JavaFX parent
-     * @param human  player that plays the game
+     * @param human player that plays the game
      */
-    public void renderHumanCards(Parent parent, Player human, HBox humanCards) {
+    public void renderHumanCards(Player human, HBox humanCards) {
         //first render cards
         for (Card c : human.getCards()) {
-            CardController cardController = new CardController(game, c);
+            CardController cardController = new CardController(game, c, human.getCards().indexOf(c) + 1);
             subControllers.add(cardController);
             try {
                 humanCards.getChildren().add(cardController.render());
@@ -148,11 +151,9 @@ public class IngameController implements Controller {
             humanCards.getChildren().clear();
             for (Card c : human.getCards()) {
                 try {
-                    CardController cardController = new CardController(game, c);
+                    CardController cardController = new CardController(game, c, human.getCards().indexOf(c) + 1);
                     subControllers.add(cardController);
                     humanCards.getChildren().add(cardController.render());
-                    System.out.println(human.getCards().size());
-
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -169,7 +170,7 @@ public class IngameController implements Controller {
     public void renderCurrentCards(Parent parent) throws IOException {
         //first render current card
         final VBox discardPile = (VBox) parent.lookup("#discardPile");
-        CardController cardController = new CardController(game, game.getCurrentCard());
+        CardController cardController = new CardController(game, game.getCurrentCard(), 0);
         subControllers.add(cardController);
         discardPile.getChildren().add(cardController.render());
 
@@ -177,7 +178,7 @@ public class IngameController implements Controller {
         currentCardListener = currentCardListener -> {
             discardPile.getChildren().clear();
             try {
-                CardController cController = new CardController(game, game.getCurrentCard());
+                CardController cController = new CardController(game, game.getCurrentCard(), 0);
                 subControllers.add(cController);
                 discardPile.getChildren().add(cController.render());
             } catch (IOException e) {

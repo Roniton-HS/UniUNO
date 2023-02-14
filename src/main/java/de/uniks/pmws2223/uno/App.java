@@ -18,7 +18,7 @@ public class App extends Application {
         this.stage = primaryStage;
         stage.setResizable(false);
         primaryStage.setScene(new Scene(new Label("Loading...")));
-        primaryStage.setTitle("Uno");
+        primaryStage.setTitle("UNO");
 
         show(new SetupController(this));
         primaryStage.show();
