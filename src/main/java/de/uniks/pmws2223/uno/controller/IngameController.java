@@ -38,12 +38,12 @@ public class IngameController implements Controller {
     //lists
     private final List<Controller> subControllers = new ArrayList<>();
 
-    public IngameController(App app, int botCount, String playerName, boolean seed) {
+    public IngameController(App app, int botCount, String playerName, boolean seeded) {
         this.app = app;
         this.botCount = botCount;
         this.playerName = playerName;
         game = new Game();
-        gameService = new GameService(seed);
+        gameService = new GameService(seeded);
     }
 
     @Override

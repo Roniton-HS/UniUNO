@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class GameServiceTest extends ApplicationTest {
 
-    GameService gameService = new GameService(false);
+    GameService gameService = new GameService();
 
     Card red12 = new Card().setValue(12).setColor("red");
     Card yellow10 = new Card().setValue(10).setColor("yellow");

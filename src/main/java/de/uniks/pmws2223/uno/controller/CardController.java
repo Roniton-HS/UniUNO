@@ -23,7 +23,7 @@ public class CardController implements Controller {
         this.game = game;
         this.card = card;
         this.id = id;
-        gameService = new GameService(false);
+        gameService = new GameService();
     }
 
     @Override

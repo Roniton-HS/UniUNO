@@ -8,14 +8,19 @@ import java.util.List;
 import java.util.Random;
 
 public class GameService {
+
     Random r;
 
-    public GameService(boolean seed) {
-        if (seed){
+    public GameService(boolean seeded) {
+        if (seeded) {
             r = new Random(100);
         }else {
             r = new Random();
         }
+    }
+
+    public GameService() {
+        r = new Random();
     }
 
     /**
@@ -38,7 +43,7 @@ public class GameService {
         return card;
     }
 
-    public String randomColor(){
+    public String randomColor() {
         int randColor = r.nextInt(4);
         return switch (randColor) {
             case 0 -> "red";
@@ -119,11 +124,10 @@ public class GameService {
     }
 
     /**
-     * @return next player to play
-     *
-     * can go 2 directions
-     *
      * @param game game object
+     * @return next player to play
+     * <p>
+     * can go 2 directions
      */
     public Player getNextPlayer(Game game) {
         Player currPlayer = game.getCurrentPlayer();
@@ -149,6 +153,7 @@ public class GameService {
 
     /**
      * sets the next player
+     *
      * @param game game object
      */
     public void nextPlayer(Game game) {
@@ -159,6 +164,7 @@ public class GameService {
     /**
      * skips a player and sets the next player
      * can go in 2 directions
+     *
      * @param game game object
      */
     public void skipPlayer(Game game) {
@@ -190,7 +196,8 @@ public class GameService {
 
     /**
      * checks if a player has a fitting card to the discard pile
-     * @param game game object
+     *
+     * @param game   game object
      * @param player player whose cards are being checked
      * @return return the fitting card
      */
