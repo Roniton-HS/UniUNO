@@ -16,7 +16,7 @@ public class CardController implements Controller {
     //final objects
     private final Game game;
     private final Card card;
-    private int id;
+    private final int id;
     private final GameService gameService;
 
     public CardController(Game game, Card card, int id) {
@@ -39,25 +39,16 @@ public class CardController implements Controller {
     @Override
     public Parent render() throws IOException {
 
-        //display right card color
-        final Parent parent = switch (card.getColor()) {
-            case "red" -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/RedCard.fxml")));
-
-            case "yellow" -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/YellowCard.fxml")));
-
-            case "green" -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/GreenCard.fxml")));
-
-            case "blue" -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/BlueCard.fxml")));
-
-            default -> FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/wildCard.fxml")));
-        };
-
-        //button to play the card
-        Button button = new Button();
-
-        //play cards on click
+        final Parent parent;
         if (card.getColor().equals("")) {
-            //wild card
+            /*
+            WILD CARD
+             */
+
+            //load fxml
+            parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/WildCard.fxml")));
+
+            //buttons to play the card
             Button redButton = (Button) parent.lookup("#redButton");
             Button blueButton = (Button) parent.lookup("#blueButton");
             Button yellowButton = (Button) parent.lookup("#yellowButton");
@@ -69,26 +60,44 @@ public class CardController implements Controller {
             greenButton.setOnAction(action -> wildCard("green"));
 
         } else {
-            //normal card
+            /*
+            NORMAL CARD
+             */
+
+            //load fxml
+            parent = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("view/Card.fxml")));
+
+            //button to play the card
+            Button button;
             button = (Button) parent.lookup("#cardButton");
             button.setId("cardButton" + id);
             button.setOnAction(action -> {
                 //players turn and card fits
-                if (game.getPlayers().get(0).getGame() != null && checkCard(card)) {
+                if (card.getOwner() == game.getCurrentPlayer() && checkCard(card)) {
                     gameService.playCard(game, card);
                 }
             });
+
+            //set card text
+            button.setText(switch (card.getValue()) {
+                case 10 -> "x";
+                case 11 -> "+2";
+                case 12 -> "<->";
+                case 13 -> "";
+                default -> String.valueOf(card.getValue());
+            });
+
+            String baseStyle = "-fx-border-color: #000000; -fx-border-width: 5;";
+            switch (card.getColor()) {
+                case "red" -> button.setStyle(baseStyle + "-fx-background-color: #9e0808");
+
+                case "yellow" -> button.setStyle(baseStyle + "-fx-background-color: #f5d520");
+
+                case "green" -> button.setStyle(baseStyle + "-fx-background-color: #088214");
+
+                case "blue" -> button.setStyle(baseStyle + "-fx-background-color: #1949b0");
+            }
         }
-
-        //display card value
-        button.setText(switch (card.getValue()) {
-            case 10 -> "x";
-            case 11 -> "+2";
-            case 12 -> "<->";
-            case 13 -> "";
-            default -> String.valueOf(card.getValue());
-        });
-
         return parent;
     }
 

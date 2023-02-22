@@ -36,6 +36,7 @@ public class GameTest extends ApplicationTest {
         sleep(500);
 
         clickOn("#cardButton2");
+        verifyThat("#cardButton-1", hasText("+2"));
         sleep(1000);
         verifyThat("#bot0CardCount", hasText("Cards: 9"));
         sleep(1000);
@@ -45,6 +46,7 @@ public class GameTest extends ApplicationTest {
         sleep(500);
 
         clickOn("#cardButton3");
+        verifyThat("#cardButton-1", hasText("+2"));
         verifyThat("#bot0CardCount", hasText("Cards: 11"));
         sleep(3000);
         verifyThat("#bot1CardCount", hasText("Cards: 5"));
@@ -53,6 +55,7 @@ public class GameTest extends ApplicationTest {
         sleep(500);
 
         clickOn("#cardButton3");
+        verifyThat("#cardButton-1", hasText("2"));
         sleep(3000);
         verifyThat("#bot0CardCount", hasText("Cards: 10"));
         sleep(3000);

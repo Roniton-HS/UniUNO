@@ -89,7 +89,7 @@ public class IngameController implements Controller {
         renderHumanCards(human, humanCards);
         renderDrawButton(parent, human);
         renderBots(parent);
-        renderCurrentCards(parent);
+        renderCurrentCard(parent);
 
         //trigger bot logic
         currentPlayerListener = currentPlayerListener -> {
@@ -166,10 +166,10 @@ public class IngameController implements Controller {
      *
      * @param parent JavaFX parent
      */
-    public void renderCurrentCards(Parent parent) throws IOException {
+    public void renderCurrentCard(Parent parent) throws IOException {
         //first render current card
         final VBox discardPile = (VBox) parent.lookup("#discardPile");
-        CardController cardController = new CardController(game, game.getCurrentCard(), 0);
+        CardController cardController = new CardController(game, game.getCurrentCard(), -1);
         subControllers.add(cardController);
         discardPile.getChildren().add(cardController.render());
 
@@ -177,7 +177,7 @@ public class IngameController implements Controller {
         currentCardListener = currentCardListener -> {
             discardPile.getChildren().clear();
             try {
-                CardController cController = new CardController(game, game.getCurrentCard(), 0);
+                CardController cController = new CardController(game, game.getCurrentCard(), -1);
                 subControllers.add(cController);
                 discardPile.getChildren().add(cController.render());
             } catch (IOException e) {
